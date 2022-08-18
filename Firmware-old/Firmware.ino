@@ -9,11 +9,11 @@
 
 
 // Pin Definitions
-#define BUZZER_PIN_SIG	2
+#define BUZZER_PIN_SIG 2
 #define LDR_PIN_SIG	A3
-#define SCALE_PIN_DAT	4
-#define SCALE_PIN_CLK	3
-#define RELAY_5V_PIN_COIL1	5
+#define SCALE_PIN_DAT 4
+#define SCALE_PIN_CLK 3
+#define RELAY_5V_PIN_COIL1 5
 
 
 
@@ -51,112 +51,19 @@ void setup()
     // Use the Serial Monitor to view printed messages
     Serial.begin(9600);
     while (!Serial) ; // wait for serial port to connect. Needed for native USB
-    Serial.println("start");
+    Serial.println("Starting...");
     
     // initialize the lcd
     lcdI2C.begin(LCD_COLUMNS, LCD_ROWS, LCD_ADDRESS, BACKLIGHT); 
     ldrAverageLight = ldr.readAverage();
     scale.set_scale(calibration_factor); 
     scale.tare(); //Assuming there is no weight on the scale at start up, reset the scale to 0
-    menuOption = menu();
-    
 }
 
 // Main logic of your circuit. It defines the interaction between the components you selected. After setup, it runs over and over again, in an eternal loop.
 void loop() 
 {
     
-    
-    if(menuOption == '1') {
-    // Buzzer - Test Code
-    // The buzzer will turn on and off for 500ms (0.5 sec)
-    buzzer.on();       // 1. turns on
-    delay(500);             // 2. waits 500 milliseconds (0.5 sec). Change the value in the brackets (500) for a longer or shorter delay in milliseconds.
-    buzzer.off();      // 3. turns off.
-    delay(500);             // 4. waits 500 milliseconds (0.5 sec). Change the value in the brackets (500) for a longer or shorter delay in milliseconds.
-    }
-    else if(menuOption == '2') {
-    // LCD 16x2 I2C - Test Code
-    // The LCD Screen will display the text of your choice.
-    lcdI2C.clear();                          // Clear LCD screen.
-    lcdI2C.print("  Circuito.io  ");                   // Print print String to LCD on first line
-    lcdI2C.selectLine(2);                    // Set cursor at the begining of line 2
-    lcdI2C.print("     Rocks!  ");                   // Print print String to LCD on second line
-    delay(1000);
-
-    }
-    else if(menuOption == '3') {
-    // LDR (Mini Photocell) - Test Code
-    // Get current light reading, substract the ambient value to detect light changes
-    int ldrSample = ldr.read();
-    int ldrDiff = abs(ldrAverageLight - ldrSample);
-    Serial.print(F("Light Diff: ")); Serial.println(ldrDiff);
-
-    }
-    else if(menuOption == '4') {
-    // SparkFun HX711 - Load Cell Amplifier - Test Code
-    float scaleUnits = scale.get_units(); //scale.get_units() returns a float
-    Serial.print(scaleUnits); //You can change this to lbs but you'll need to refactor the calibration_factor
-    Serial.println(" Kg"); //You can change this to lbs but you'll need to refactor the calibration_factor
-    }
-    else if(menuOption == '5') {
-    // Relay SPDT - Test Code
-    // The relay will turn on and off for 500ms (0.5 sec)
-    relay_5v.on();       // 1. turns on
-    delay(500);             // 2. waits 500 milliseconds (0.5 sec). Change the value in the brackets (500) for a longer or shorter delay in milliseconds.
-    relay_5v.off();      // 3. turns off.
-    delay(500);             // 4. waits 500 milliseconds (0.5 sec). Change the value in the brackets (500) for a longer or shorter delay in milliseconds.
-    }
-    
-    if (millis() - time0 > timeout)
-    {
-        menuOption = menu();
-    }
-    
-}
-
-
-
-// Menu function for selecting the components to be tested
-// Follow serial monitor for instrcutions
-char menu()
-{
-
-    Serial.println(F("\nWhich component would you like to test?"));
-    Serial.println(F("(1) Buzzer"));
-    Serial.println(F("(2) LCD 16x2 I2C"));
-    Serial.println(F("(3) LDR (Mini Photocell)"));
-    Serial.println(F("(4) SparkFun HX711 - Load Cell Amplifier"));
-    Serial.println(F("(5) Relay SPDT"));
-    Serial.println(F("(menu) send anything else or press on board reset button\n"));
-    while (!Serial.available());
-
-    // Read data from serial monitor if received
-    while (Serial.available()) 
-    {
-        char c = Serial.read();
-        if (isAlphaNumeric(c)) 
-        {   
-            
-            if(c == '1') 
-    			Serial.println(F("Now Testing Buzzer"));
-    		else if(c == '2') 
-    			Serial.println(F("Now Testing LCD 16x2 I2C"));
-    		else if(c == '3') 
-    			Serial.println(F("Now Testing LDR (Mini Photocell)"));
-    		else if(c == '4') 
-    			Serial.println(F("Now Testing SparkFun HX711 - Load Cell Amplifier"));
-    		else if(c == '5') 
-    			Serial.println(F("Now Testing Relay SPDT"));
-            else
-            {
-                Serial.println(F("illegal input!"));
-                return 0;
-            }
-            time0 = millis();
-            return c;
-        }
-    }
 }
 
 /*******************************************************
